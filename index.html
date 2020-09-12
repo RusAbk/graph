@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph</title>
+    <style>
+        body {
+            color: #2c3e50;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .point {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #2ecc71;
+            background: rgba(255, 255, 255, .7);
+            border-radius: 3px;
+            padding: 2px 7px;
+            text-align: center;
+            cursor: text;
+            outline: none;
+            z-index: 10000;
+        }
+
+        .point::after {
+            display: block;
+            content: ' ';
+            box-sizing: border-box;
+            background-color: #2ecc71;
+            width: 16px;
+            height: 16px;
+            border-radius: 10px;
+            position: absolute;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: 7px;
+            cursor: url('drag.png') 16 16, auto;
+        }
+
+        .trash {
+            width: 100px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            opacity: 0.5;
+            display: none;
+            animation: pulse 0.7s infinite alternate ease-in-out;
+        }
+
+        .edge {
+            height: 0;
+            border: 0;
+            border-top: 8px solid rgba(46, 204, 113, 0.06);
+            position: absolute;
+            cursor: url('pencil.png') 0 32, auto;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        .edge:hover {
+            border-color: rgba(46, 204, 113, 0.1);
+        }
+
+        .edge.active {
+            border-color: rgba(46, 204, 113, 1);
+            border-style: solid;
+            cursor: url('clean.png') 12 31, auto;
+        }
+
+        .edge.active:hover {
+            border-color: rgba(46, 204, 113, 0.5);
+        }
+
+        #draw_area {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100vh;
+            border: 1px solid #000;
+            cursor: url('pin.png') 16 16, auto;
+            position: absolute;
+        }
+
+        #result {
+            position: absolute;
+            top: 100vh;
+        }
+
+        .save_btn {
+            position: absolute;
+            top: 150px;
+            left: 0;
+            font-size: 14px;
+            font-weight: bold;
+
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <img src="trash.png" class="trash">
+    <div id="draw_area"></div>
+    <canvas id="result"></canvas>
+    <h2 id="introText">Чтобы начать рисовать граф,<br>поставьте точку в любом месте!</h2>
+    <button class="save_btn">
+        Сохранить <br><br>
+        <img src="save.png" alt="">
+    </button>
+
+    <script src="FileSaver.min.js"></script>
+    <script src="drawings.js"></script>
+    <script>
+        'use strict';
+
+        let draw_area = document.querySelector('#draw_area');
+        let canvas = document.querySelector('#result');
+        canvas.width = draw_area.clientWidth;
+        canvas.height = draw_area.clientHeight;
+
+        let ctx = canvas.getContext('2d');
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key == 's' || e.key == 'S') && e.ctrlKey) {
+                e.preventDefault();
+            savePicture();
+            }
+        })
+
+        document.querySelector('.save_btn').addEventListener('mouseup', (e) => {
+            e.stopPropagation();
+            savePicture();
+        });
+
+        function savePicture() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            let edges = draw_area.querySelectorAll('.edge');
+            for (let edge of edges) {
+                let start = draw_area.querySelector(`#${edge.dataset.start}`);
+                let end = draw_area.querySelector(`#${edge.dataset.end}`);
+
+                ctx.beginPath();
+                ctx.moveTo(start.getBoundingClientRect().left + start.offsetWidth / 2, start.getBoundingClientRect().bottom + 8)
+                ctx.lineWidth = 8;
+                ctx.lineTo(end.getBoundingClientRect().left + end.offsetWidth / 2, end.getBoundingClientRect().bottom + 8)
+                if (edge.classList.contains('active'))
+                    ctx.strokeStyle = "#2ecc71";
+                else
+                    ctx.strokeStyle = "#f3fcf7";
+                ctx.stroke();
+            }
+
+            // Рисуем точки
+            let points = draw_area.querySelectorAll('.point');
+            for (let point of points) {
+                let y = point.getBoundingClientRect().bottom + 8;
+                let x = point.getBoundingClientRect().left + point.offsetWidth / 2;
+
+                // Рисуем точку
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#2ecc71';
+                ctx.fill();
+
+                // Рисуем текст
+                ctx.fillStyle = "#2c3e50";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(point.innerText, point.getBoundingClientRect().left + 8, point.getBoundingClientRect().top + 3);
+            }
+            canvas.toBlob(function (blob) {
+                saveAs(blob, "myGraph.png");
+            });
+        }
+    </script>
+
+</html>
