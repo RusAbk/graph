@@ -48,7 +48,7 @@
             left: 50%;
             margin-left: -8px;
             margin-top: 7px;
-            cursor: url('drag.png') 16 16, auto;
+            cursor: url('img/cursors/drag.png') 16 16, auto;
         }
 
         .trash {
@@ -66,7 +66,7 @@
             border: 0;
             border-top: 8px solid rgba(46, 204, 113, 0.06);
             position: absolute;
-            cursor: url('pencil.png') 0 32, auto;
+            cursor: url('img/cursors/pencil.png') 0 32, auto;
             transition: border-color 0.2s;
             text-align: center;
         }
@@ -78,7 +78,7 @@
         .edge.active {
             border-color: rgba(46, 204, 113, 1);
             border-style: solid;
-            cursor: url('clean.png') 12 31, auto;
+            cursor: url('img/cursors/clean.png') 12 31, auto;
         }
 
         .edge.active:hover {
@@ -90,7 +90,7 @@
             width: 100%;
             height: 100vh;
             border: 1px solid #000;
-            cursor: url('pin.png') 16 16, auto;
+            cursor: url('img/cursors/pin.png') 16 16, auto;
             position: absolute;
         }
 
@@ -122,13 +122,13 @@
 </head>
 
 <body>
-    <img src="trash.png" class="trash">
+    <img src="img/trash.png" class="trash">
     <div id="draw_area"></div>
     <canvas id="result"></canvas>
     <h2 id="introText">Чтобы начать рисовать граф,<br>поставьте точку в любом месте!</h2>
     <button class="save_btn">
         Сохранить <br><br>
-        <img src="save.png" alt="">
+        <img src="img/save.png" alt="">
     </button>
 
     <script src="js/FileSaver.min.js"></script>
