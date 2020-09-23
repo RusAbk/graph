@@ -54,11 +54,12 @@
                 ctx.moveTo(start.getBoundingClientRect().left + start.offsetWidth / 2, start.getBoundingClientRect().bottom + 8)
                 ctx.lineWidth = 8;
                 ctx.lineTo(end.getBoundingClientRect().left + end.offsetWidth / 2, end.getBoundingClientRect().bottom + 8)
-                if (edge.classList.contains('active'))
+                if (edge.classList.contains('active')) {
                     ctx.strokeStyle = "#2ecc71";
-                else
-                    ctx.strokeStyle = "#f3fcf7";
-                ctx.stroke();
+                    ctx.stroke();
+                }
+                // else
+                // ctx.strokeStyle = "#f3fcf7";
             }
 
             // Рисуем точки
